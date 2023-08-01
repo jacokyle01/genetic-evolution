@@ -28,5 +28,4 @@ function velocityFromEnergyCalc() {
 	};
 }
 
-const physics = createPhysics();
-console.log(physics.velocityFromEnergy(6, 3));
+//////

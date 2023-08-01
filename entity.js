@@ -6,29 +6,27 @@ export const createEntity = (kinematicData) => {
 	return entity;
 };
 
-export const createKinematicData = (x, y, speed, direction) => {
-	return { x, y, speed, direction };
+export const createKinematicData = (position, velocity) => {
+	return {position, velocity};
 };
+
+export const createKinematicDataRaw = (px, py, vx, vy) => {
+	const position = {
+		x: px,
+		y: py
+	}
+	const velocity = {
+		x: vx,
+		y: vy
+	}
+	return createKinematicData(position, velocity);
+}
 
 function mover(data) {
 	return {
 		move: function () {
-			switch (data.direction) {
-				case "north":
-					data.y -= data.speed;
-					break;
-				case "east":
-					data.x += data.speed;
-					break;
-				case "south":
-					data.y += data.speed;
-					break;
-				case "west":
-					data.x -= data.speed;
-					break;
-				default:
-					break;
-			}
+			data.position.x += data.velocity.x;
+			data.position.y += data.velocity.y;
 		},
 	};
 }
@@ -41,15 +39,3 @@ function directionChanger(data) {
 	};
 }
 //////////
-
-const data = createKinematicData(10, 10, 10, "north");
-const entity = createEntity(data);
-
-entity.reorient("east");
-entity.reorient("south");
-entity.reorient("east");
-
-
-console.log(entity.kinematicData);
-entity.move();
-console.log(entity.kinematicData);
