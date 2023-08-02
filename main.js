@@ -4,32 +4,29 @@ import {
 	createKinematicDataRaw,
 } from "./entity.js";
 
-const entities = [];
+import { createPropellant } from "./propellant.js";
+
+export const entities = [];
+const propellants = [];
 const STARTING_ENTITIES = 3;
 let tick = 0;
 
-function nextTick() {
+export function nextTick() {
 	tick++;
 	entities.forEach((entity) => entity.move());
 }
 
 export function startSimulation() {
 	for (let i = 0; i < STARTING_ENTITIES; i++) {
-		initializeEntity();
+		//initializeEntity();
 	}
 }
 
-function initializeEntity() {
-	const data = createKinematicData(0, 0, 10, "east");
-	const entity = createEntity(data);
+export function initializeEntity(entity) {
 	entities.push(entity);
 }
 
 /////////
-const data = createKinematicDataRaw(10, 10, 1, 1);
-console.log(data);
 
-const entity = createEntity(data);
-console.log(entity);
-entity.move();
-console.log(entity);
+const tnt = createPropellant(createKinematicDataRaw(10, 10, 1, 1), 50, 25)
+console.log(tnt);
