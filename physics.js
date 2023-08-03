@@ -12,6 +12,9 @@ export const createPhysics = () => {
 function energyCalculator() {
 	return {
 		calculateEnergy: function (energy, distance) {
+			if (distance == 0) {
+				return 0;
+			}
 			let meters = distance * pixelsToMeters;
 			let inverse = 1 / Math.pow(meters, 2);
 			return energy * inverse;
@@ -19,6 +22,7 @@ function energyCalculator() {
 	};
 }
 
+//return: px/second
 function velocityFromEnergyCalc() {
 	return {
 		velocityFromEnergy: function (energy, mass) {
