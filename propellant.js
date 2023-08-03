@@ -1,8 +1,8 @@
 import { createEntity } from './entity.js';
 
-export const createPropellant = (kinematicData, explosiveForce, explodesAt) => {
+export const createPropellant = (kinematicData, mass, explosiveForce, explodesAt) => {
     return {
-        ...createEntity(kinematicData),
+        ...createEntity(kinematicData, mass),
         explosiveForce,
         explodesAt
     }

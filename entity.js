@@ -1,6 +1,7 @@
-export const createEntity = (kinematicData) => {
+export const createEntity = (kinematicData, mass) => {
 	const entity = {
 		kinematicData,
+		mass
 	};
 	Object.assign(entity, mover(kinematicData), directionChanger(kinematicData));
 	return entity;
