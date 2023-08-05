@@ -11,6 +11,10 @@ import { createPhysics } from "./physics.js";
 export const entities = [];
 export let propellants = [];
 const STARTING_ENTITIES = 3;
+const canvas = document.querySelector("canvas");
+const button = document.querySelector("button");
+button.addEventListener("click", (e) => nextTick());
+export const ctx = canvas.getContext("2d");
 export let tick = 0;
 
 export function nextTick() {
@@ -24,6 +28,14 @@ export function nextTick() {
 	propellants = propellants.filter((propellant) => {
 		return propellant.explodesAt > tick;
 	});
+	animate();
+}
+
+function animate() {
+	ctx.clearRect(0, 0, 400, 400);
+	entities.forEach((entity) => entity.draw());
+	propellants.forEach((propellant) => propellant.draw());
+
 }
 
 function handleExplosion(propellant) {
@@ -75,15 +87,13 @@ export function initializePropellant(propellant) {
 }
 
 // /////////
-// const entity = createEntity(createKinematicDataRaw(30, 10, 0, 0), 10);
-// initializeEntity(entity);
-// const propellant = createPropellant(
-// 	createKinematicDataRaw(10, 10, 0, 0),
-// 	10,
-// 	100,
-// 	2
-// );
-// initializePropellant(propellant);
-// nextTick();
-// nextTick();
-// console.log(entities[0].kinematicData.velocity.x);
+const entity = createEntity(createKinematicDataRaw(30, 10, 10, 0), 10);
+initializeEntity(entity);
+
+const tnt = createPropellant(
+	createKinematicDataRaw(180, 30, 0, 0),
+	10,
+	100,
+	5
+);
+initializePropellant(tnt);

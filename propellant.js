@@ -1,9 +1,35 @@
-import { createEntity } from './entity.js';
+import { ctx } from "./main.js";
 
-export const createPropellant = (kinematicData, mass, explosiveForce, explodesAt) => {
-    return {
-        ...createEntity(kinematicData, mass),
-        explosiveForce,
-        explodesAt
-    }
+import {mover, directionChanger } from "./entity.js";
+
+export const createPropellant = (
+	kinematicData,
+	mass,
+	explosiveForce,
+	explodesAt
+) => {
+	const tnt = {
+		kinematicData,
+		mass,
+		explosiveForce,
+		explodesAt,
+	};
+	Object.assign(tnt, mover(kinematicData), directionChanger(kinematicData), drawer(kinematicData));
+	return tnt;
+};
+
+function drawer(data) {
+	return {
+		draw: function () {
+            const x = data.position.x;
+            const y = data.position.y;
+            const width = 80;
+
+			ctx.fillStyle = "red";
+			ctx.beginPath();
+			ctx.fillRect(x - width/2, y - width/2, width/2, width/2);
+
+			ctx.stroke();
+		},
+	};
 }
