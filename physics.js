@@ -1,4 +1,5 @@
 const pixelsToMeters = 0.1;
+//TODO separate gamePhysics module to handle explosions, collosions, etc...
 
 export const createPhysics = () => {
 	return Object.assign(

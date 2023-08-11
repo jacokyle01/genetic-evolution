@@ -1,19 +1,15 @@
-import {
-	createEntity,
-	createKinematicData,
-	createKinematicDataRaw,
-} from "./entity.js";
+import { createEntity, createKinematicDataRaw } from "./entity.js";
 
 import { createPropellant } from "./propellant.js";
 
 import { createPhysics } from "./physics.js";
 
-export const entities = [];
+export let entities = [];
 export let propellants = [];
 const STARTING_ENTITIES = 3;
 const canvas = document.querySelector("canvas");
 const button = document.querySelector("button");
-button.addEventListener("click", (e) => nextTick());
+button.addEventListener("click", () => nextTick());
 export const ctx = canvas.getContext("2d");
 export let tick = 0;
 
@@ -35,7 +31,6 @@ function animate() {
 	ctx.clearRect(0, 0, 400, 400);
 	entities.forEach((entity) => entity.draw());
 	propellants.forEach((propellant) => propellant.draw());
-
 }
 
 function handleExplosion(propellant) {
@@ -44,6 +39,9 @@ function handleExplosion(propellant) {
 			x: entity.kinematicData.position.x - propellant.kinematicData.position.x,
 			y: entity.kinematicData.position.y - propellant.kinematicData.position.y,
 		};
+
+		let xIsPositive = propellantVector.x > 0;
+		let yIsPositive = propellantVector.y > 0;
 
 		const physics = createPhysics();
 
@@ -67,8 +65,17 @@ function handleExplosion(propellant) {
 		);
 
 		//add velocity to affected entity's velocity
-		entity.kinematicData.velocity.x += propellantVector.x;
-		entity.kinematicData.velocity.y += propellantVector.y;
+
+		if (xIsPositive) {
+			entity.kinematicData.velocity.x += propellantVector.x;
+		} else {
+			entity.kinematicData.velocity.x -= propellantVector.x;
+		}
+		if (yIsPositive) {
+			entity.kinematicData.velocity.y += propellantVector.y;
+		} else {
+			entity.kinematicData.velocity.y -= propellantVector.y;
+		}
 	});
 }
 
@@ -86,14 +93,14 @@ export function initializePropellant(propellant) {
 	propellants.push(propellant);
 }
 
-// /////////
-const entity = createEntity(createKinematicDataRaw(30, 10, 10, 0), 10);
-initializeEntity(entity);
+export function resetGame() {
+	tick = 0;
+	entities = [];
+	propellants = [];
+}
 
-const tnt = createPropellant(
-	createKinematicDataRaw(180, 30, 0, 0),
-	10,
-	100,
-	5
-);
-initializePropellant(tnt);
+// /////////
+const entity2 = createEntity(createKinematicDataRaw(30, 30, 0, 0), 10);
+const tnt2 = createPropellant(createKinematicDataRaw(40, 50, 0, 0), 10, 100, 1);
+initializePropellant(tnt2);
+initializeEntity(entity2);
