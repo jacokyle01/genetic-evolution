@@ -23,11 +23,11 @@ function drawer(data) {
 		draw: function () {
             const x = data.position.x;
             const y = data.position.y;
-            const width = 80;
+            const width = 30;
 
 			ctx.fillStyle = "red";
 			ctx.beginPath();
-			ctx.fillRect(x - width/2, y - width/2, width/2, width/2);
+			ctx.fillRect(x - width/2, y - width/2, width, width);
 
 			ctx.stroke();
 		},
