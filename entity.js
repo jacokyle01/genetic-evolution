@@ -1,5 +1,6 @@
 import { ctx } from "./main.js";
 import { createPropellant } from "./propellant.js";
+import { toRadians } from "./maths.js";
 
 export const createEntity = (kinematicData, mass, facing, payloadInfo) => {
 	const entity = {
@@ -76,9 +77,11 @@ function payloadGetter(kData, pInfo) {
 	return {
 		getPayload: function () {
 			console.log(pInfo);
-			let xVel = pInfo.ejectionVelocity * Math.cos(this.facing);
+			let facingRadians = toRadians(this.facing);
+			facingRadians = facingRadians.toFixed(3);
+			let xVel = pInfo.ejectionVelocity * Math.cos(facingRadians);
 			let yVel =
-				-1 * pInfo.ejectionVelocity * Math.sin(this.facing);
+				-1 * pInfo.ejectionVelocity * Math.sin(facingRadians);
 			const propellant = createPropellant(
 				createKinematicDataRaw(
 					kData.position.x,
