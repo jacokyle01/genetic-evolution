@@ -1,21 +1,33 @@
 import { ctx } from "./main.js";
+import { createPropellant } from "./propellant.js";
 
-export const createEntity = (kinematicData, mass) => {
+export const createEntity = (kinematicData, mass, facing, payloadInfo) => {
 	const entity = {
 		kinematicData,
 		mass,
+		facing,
+		payloadInfo,
 	};
 	Object.assign(
 		entity,
 		mover(kinematicData),
 		directionChanger(kinematicData),
-		drawer(kinematicData)
+		drawer(kinematicData),
+		payloadGetter(kinematicData, payloadInfo)
 	);
 	return entity;
 };
 
 export const createKinematicData = (position, velocity) => {
 	return { position, velocity };
+};
+
+export const createPayloadInfo = (
+	ejectionInterval,
+	ejectionVelocity,
+	payloadData
+) => {
+	return { ejectionInterval, ejectionVelocity, payloadData };
 };
 
 export const createKinematicDataRaw = (px, py, vx, vy) => {
@@ -56,6 +68,28 @@ function drawer(data) {
 			ctx.fill();
 			ctx.lineWidth = 2;
 			ctx.stroke();
+		},
+	};
+}
+
+function payloadGetter(kData, pInfo) {
+	return {
+		getPayload: function () {
+			console.log(pInfo);
+			let xVel = pInfo.ejectionVelocity * Math.cos(this.facing);
+			let yVel =
+				-1 * pInfo.ejectionVelocity * Math.sin(this.facing);
+			const propellant = createPropellant(
+				createKinematicDataRaw(
+					kData.position.x,
+					kData.position.y,
+					xVel,
+					yVel
+				),
+				...pInfo.payloadData
+			);
+
+			return propellant;
 		},
 	};
 }

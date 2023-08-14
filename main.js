@@ -1,4 +1,4 @@
-import { createEntity, createKinematicDataRaw } from "./entity.js";
+import { createEntity, createKinematicDataRaw, createPayloadInfo } from "./entity.js";
 
 import { createPropellant } from "./propellant.js";
 
@@ -24,6 +24,16 @@ export function nextTick() {
 	propellants = propellants.filter((propellant) => {
 		return propellant.explodesAt > tick;
 	});
+
+	//if nth tick, eject payload
+	entities.forEach((entity) => {
+		if (tick % entity.payloadInfo.ejectionInterval == 0) {
+			const propellant = entity.getPayload();
+			console.log(propellant);
+			initializePropellant(propellant);
+		}
+	})
+
 	animate();
 }
 
@@ -100,7 +110,17 @@ export function resetGame() {
 }
 
 // /////////
-const entity2 = createEntity(createKinematicDataRaw(30, 30, 0, 0), 10);
-const tnt2 = createPropellant(createKinematicDataRaw(40, 50, 0, 0), 10, 100, 1);
-initializePropellant(tnt2);
-initializeEntity(entity2);
+// const entity2 = createEntity(createKinematicDataRaw(30, 30, 20, 0), 10);
+// const tnt2 = createPropellant(createKinematicDataRaw(70, 70, 0, 0), 10, 100, 4);
+// initializePropellant(tnt2);
+// initializeEntity(entity2);
+// const entity = createEntity(
+// 	createKinematicDataRaw(90, 30, 0, 0),
+// 	100, //mass
+// 	0, //facing
+//     createPayloadInfo(5, 10, [10, 50, 10])
+// );
+// console.log(entity);
+// initializeEntity(entity);
+// nextTick();
+// nextTick();
