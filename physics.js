@@ -13,7 +13,7 @@ export const createPhysics = () => {
 function energyCalculator() {
 	return {
 		calculateEnergy: function (energy, distance) {
-			if (distance == 0) {
+			if (Math.abs(distance) < 1) {
 				return 0;
 			}
 			let meters = distance * pixelsToMeters;
