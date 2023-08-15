@@ -1,4 +1,4 @@
-import { ctx } from "./main.js";
+import { ctx, tick } from "./main.js";
 import { createPropellant } from "./propellant.js";
 import { toRadians } from "./maths.js";
 
@@ -26,9 +26,10 @@ export const createKinematicData = (position, velocity) => {
 export const createPayloadInfo = (
 	ejectionInterval,
 	ejectionVelocity,
-	payloadData
+	payloadData,
+	explodesIn
 ) => {
-	return { ejectionInterval, ejectionVelocity, payloadData };
+	return { ejectionInterval, ejectionVelocity, payloadData, explodesIn };
 };
 
 export const createKinematicDataRaw = (px, py, vx, vy) => {
@@ -89,7 +90,9 @@ function payloadGetter(kData, pInfo) {
 					xVel,
 					yVel
 				),
-				...pInfo.payloadData
+				...pInfo.payloadData,
+				pInfo.explodesIn + tick
+
 			);
 
 			return propellant;
