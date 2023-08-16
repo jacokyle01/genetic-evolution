@@ -11,6 +11,8 @@ export let propellants = [];
 export let nutrients = [];
 
 const STARTING_ENTITIES = 3;
+const NUM_NUTRIENTS = 10;
+
 const canvas = document.querySelector("canvas");
 
 const button = document.querySelector("button");
@@ -18,10 +20,17 @@ button.addEventListener("click", () => nextTick());
 export const ctx = canvas.getContext("2d");
 export let tick = 0;
 
-
+window.addEventListener("load", () => {
+	console.log("page is fully loaded");
+	canvas.width = 1000;
+	canvas.height = 400;
+	nextTick();
+  });
 
 export function nextTick() {
 	tick++;
+	regulateNutrients();
+
 	entities.forEach((entity) => entity.move());
 	propellants.forEach((propellant) => propellant.move());
 	const exploding = propellants.filter((propellant) => {
@@ -41,14 +50,22 @@ export function nextTick() {
 		}
 	})
 
-	handleWindowResize();
 	animate();
-	//nextTick();
 }
 
-function handleWindowResize() {
-	canvas.width = .75 * window.innerWidth;
-	canvas.height = .75 * window.innerHeight;
+function regulateNutrients() {
+	while (nutrients.length < NUM_NUTRIENTS) {
+		console.log(nutrients.length);
+		const nutrient = generateNutrient();
+		initializeNutrient(nutrient);
+	}
+}
+
+function generateNutrient() {
+	let x = Math.floor(Math.random() * canvas.width);
+	let y = Math.floor(Math.random() * canvas.height);
+
+	return createNutrient(createKinematicDataRaw(x, y, 0, 0));
 }
 
 function animate() {
@@ -79,11 +96,13 @@ function handleExplosion(propellant) {
 			propellant.explosiveForce,
 			propellantVector.y
 		);
+
 		//calculate resultant velocity components
 		propellantVector.x = physics.velocityFromEnergy(
 			propellantVector.x,
 			entity.mass
 		);
+
 		propellantVector.y = physics.velocityFromEnergy(
 			propellantVector.y,
 			entity.mass
@@ -127,3 +146,5 @@ export function resetGame() {
 	entities = [];
 	propellants = [];
 }
+
+//setInterval(nextTick, 50);
