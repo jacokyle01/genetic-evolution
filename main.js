@@ -8,10 +8,13 @@ export let entities = [];
 export let propellants = [];
 const STARTING_ENTITIES = 3;
 const canvas = document.querySelector("canvas");
+
 const button = document.querySelector("button");
 button.addEventListener("click", () => nextTick());
 export const ctx = canvas.getContext("2d");
 export let tick = 0;
+
+
 
 export function nextTick() {
 	tick++;
@@ -34,11 +37,18 @@ export function nextTick() {
 		}
 	})
 
+	handleWindowResize();
 	animate();
+	//nextTick();
+}
+
+function handleWindowResize() {
+	canvas.width = .75 * window.innerWidth;
+	canvas.height = .75 * window.innerHeight;
 }
 
 function animate() {
-	ctx.clearRect(0, 0, 400, 400);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	entities.forEach((entity) => entity.draw());
 	propellants.forEach((propellant) => propellant.draw());
 }
@@ -114,13 +124,28 @@ export function resetGame() {
 // const tnt2 = createPropellant(createKinematicDataRaw(70, 70, 0, 0), 10, 100, 4);
 // initializePropellant(tnt2);
 // initializeEntity(entity2);
-// const entity = createEntity(
-// 	createKinematicDataRaw(90, 30, 0, 0),
-// 	100, //mass
-// 	0, //facing
-//     createPayloadInfo(5, 10, [10, 50, 10])
-// );
-// console.log(entity);
-// initializeEntity(entity);
-// nextTick();
-// nextTick();
+const entity = createEntity(
+	createKinematicDataRaw(90, 30, 0, 0),
+	5000, //mass
+	135, //facing
+    createPayloadInfo(5, 5, [9, 15], 5)
+);
+
+const entity2 = createEntity(
+	createKinematicDataRaw(800, 200, 0, 0),
+	5000, //mass
+	315, //facing
+    createPayloadInfo(5, 5, [9, 15], 5)
+);
+
+
+console.log(entity);
+initializeEntity(entity);
+initializeEntity(entity2);
+
+const tnt = entity.getPayload();
+console.log({tnt});
+nextTick();
+nextTick();
+const tnt2 = entity.getPayload();
+console.log({tnt2})
