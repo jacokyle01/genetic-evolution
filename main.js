@@ -4,8 +4,12 @@ import { createPropellant } from "./propellant.js";
 
 import { createPhysics } from "./physics.js";
 
+import { createNutrient } from "./nutrient.js";
+
 export let entities = [];
 export let propellants = [];
+export let nutrients = [];
+
 const STARTING_ENTITIES = 3;
 const canvas = document.querySelector("canvas");
 
@@ -51,6 +55,7 @@ function animate() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	entities.forEach((entity) => entity.draw());
 	propellants.forEach((propellant) => propellant.draw());
+	nutrients.forEach((nutrient) => nutrient.draw());
 }
 
 function handleExplosion(propellant) {
@@ -113,39 +118,12 @@ export function initializePropellant(propellant) {
 	propellants.push(propellant);
 }
 
+export function initializeNutrient(nutrient) {
+	nutrients.push(nutrient);
+}
+
 export function resetGame() {
 	tick = 0;
 	entities = [];
 	propellants = [];
 }
-
-// /////////
-// const entity2 = createEntity(createKinematicDataRaw(30, 30, 20, 0), 10);
-// const tnt2 = createPropellant(createKinematicDataRaw(70, 70, 0, 0), 10, 100, 4);
-// initializePropellant(tnt2);
-// initializeEntity(entity2);
-const entity = createEntity(
-	createKinematicDataRaw(90, 30, 0, 0),
-	5000, //mass
-	135, //facing
-    createPayloadInfo(5, 5, [9, 15], 5)
-);
-
-const entity2 = createEntity(
-	createKinematicDataRaw(800, 200, 0, 0),
-	5000, //mass
-	315, //facing
-    createPayloadInfo(5, 5, [9, 15], 5)
-);
-
-
-console.log(entity);
-initializeEntity(entity);
-initializeEntity(entity2);
-
-const tnt = entity.getPayload();
-console.log({tnt});
-nextTick();
-nextTick();
-const tnt2 = entity.getPayload();
-console.log({tnt2})
