@@ -78,11 +78,11 @@ function payloadGetter(kData, pInfo) {
 	return {
 		getPayload: function () {
 			console.log(pInfo);
-			let facingRadians = toRadians(this.facing);
-			facingRadians = facingRadians.toFixed(3);
-			let xVel = pInfo.ejectionVelocity * Math.cos(facingRadians);
+			let ejectingAt = toRadians(this.facing + 180);
+			ejectingAt = ejectingAt.toFixed(3);
+			let xVel = pInfo.ejectionVelocity * Math.cos(ejectingAt);
 			let yVel =
-				-1 * pInfo.ejectionVelocity * Math.sin(facingRadians);
+				-1 * pInfo.ejectionVelocity * Math.sin(ejectingAt);
 			const propellant = createPropellant(
 				createKinematicDataRaw(
 					kData.position.x,
