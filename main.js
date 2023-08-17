@@ -1,10 +1,16 @@
-import { createEntity, createKinematicDataRaw, createPayloadInfo } from "./entity.js";
+import {
+	createEntity,
+	createKinematicDataRaw,
+	createPayloadInfo,
+} from "./entity.js";
 
 import { createPropellant } from "./propellant.js";
 
 import { createPhysics } from "./physics.js";
 
 import { createNutrient } from "./nutrient.js";
+
+import { distance } from "./maths.js";
 
 export let entities = [];
 export let propellants = [];
@@ -25,11 +31,31 @@ window.addEventListener("load", () => {
 	canvas.width = 1000;
 	canvas.height = 400;
 	nextTick();
-  });
+});
 
 export function nextTick() {
 	tick++;
 	regulateNutrients();
+
+	//have each entity target the nearest nutrient
+	entities.forEach((entity) => {
+		let closest = nutrients.reduce((closest, next) => {
+			let distanceClosest = distance(
+				closest.kinematicData.position.x,
+				closest.kinematicData.position.y,
+				entity.kinematicData.position.x,
+				entity.kinematicData.position.y
+				)
+			let distanceNext = distance(
+				next.kinematicData.position.x,
+				next.kinematicData.position.y,
+				entity.kinematicData.position.x,
+				entity.kinematicData.position.y
+			)
+			return distanceClosest > distanceNext ? next : closest;
+		})
+		entity.target(closest);
+	});
 
 	entities.forEach((entity) => entity.move());
 	propellants.forEach((propellant) => propellant.move());
@@ -45,17 +71,26 @@ export function nextTick() {
 	entities.forEach((entity) => {
 		if (tick % entity.payloadInfo.ejectionInterval == 0) {
 			const propellant = entity.getPayload();
-			console.log(propellant);
 			initializePropellant(propellant);
 		}
-	})
+	});
 
 	animate();
 }
 
+export function findNearestNutrient(entity) {
+	let entityPos = entity.kinematicData.position;
+	const distances = nutrients.map((nutrient) => {
+		let nutrientPos = nutrient.kinematicData.position;
+		return distance(entityPos.x, entityPos.y, nutrientPos.x, nutrientPos.y);
+	});
+	//console.log(distances);
+	
+
+}
+
 function regulateNutrients() {
 	while (nutrients.length < NUM_NUTRIENTS) {
-		console.log(nutrients.length);
 		const nutrient = generateNutrient();
 		initializeNutrient(nutrient);
 	}
@@ -147,4 +182,4 @@ export function resetGame() {
 	propellants = [];
 }
 
-//setInterval(nextTick, 50);
+setInterval(nextTick, 50);
