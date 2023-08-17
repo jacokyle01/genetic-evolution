@@ -1,6 +1,6 @@
 import { ctx, tick } from "./main.js";
 import { createPropellant } from "./propellant.js";
-import { toRadians } from "./maths.js";
+import { toRadians, toDegrees } from "./maths.js";
 
 export const createEntity = (kinematicData, mass, facing, payloadInfo) => {
 	const entity = {
@@ -14,7 +14,8 @@ export const createEntity = (kinematicData, mass, facing, payloadInfo) => {
 		mover(kinematicData),
 		directionChanger(kinematicData),
 		drawer(kinematicData),
-		payloadGetter(kinematicData, payloadInfo)
+		payloadGetter(kinematicData, payloadInfo),
+		targeter(kinematicData)
 	);
 	return entity;
 };
@@ -98,5 +99,16 @@ function payloadGetter(kData, pInfo) {
 			return propellant;
 		},
 	};
+}
+
+function targeter(kData) {
+	return {
+		target: function(nutrient) {
+			let xdelta = nutrient.kinematicData.position.x - kData.position.x;
+			let ydelta = kData.position.y - nutrient.kinematicData.position.y;
+			let radians = Math.atan2(ydelta, xdelta);
+			this.facing = (toDegrees(radians) + 360) % 360;
+		}
+	}
 }
 //////////
