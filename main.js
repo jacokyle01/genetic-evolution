@@ -20,6 +20,9 @@ const STARTING_ENTITIES = 3;
 const NUM_NUTRIENTS = 10;
 
 const canvas = document.querySelector("canvas");
+export const ENTITY_RADIUS = 20;
+export const NUTRIENT_RADIUS = 10;
+export const PROPELLANT_WIDTH = 30;
 
 const button = document.querySelector("button");
 button.addEventListener("click", () => nextTick());

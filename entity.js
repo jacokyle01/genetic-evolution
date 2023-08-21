@@ -1,4 +1,4 @@
-import { ctx, tick } from "./main.js";
+import { ENTITY_RADIUS, ctx, tick } from "./main.js";
 import { createPropellant } from "./propellant.js";
 import { toRadians, toDegrees } from "./maths.js";
 
@@ -66,7 +66,7 @@ function drawer(data) {
 	return {
 		draw: function () {
 			ctx.beginPath();
-			ctx.arc(data.position.x, data.position.y, 20, 0, 2 * Math.PI);
+			ctx.arc(data.position.x, data.position.y, ENTITY_RADIUS, 0, 2 * Math.PI);
 			ctx.fillStyle = "blue";
 			ctx.fill();
 			ctx.lineWidth = 2;
@@ -78,7 +78,6 @@ function drawer(data) {
 function payloadGetter(kData, pInfo) {
 	return {
 		getPayload: function () {
-			console.log(pInfo);
 			let ejectingAt = toRadians(this.facing + 180);
 			ejectingAt = ejectingAt.toFixed(3);
 			let xVel = pInfo.ejectionVelocity * Math.cos(ejectingAt);

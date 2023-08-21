@@ -1,4 +1,4 @@
-import { ctx } from "./main.js";
+import { NUTRIENT_RADIUS, ctx } from "./main.js";
 
 export const createNutrient = (kinematicData) => {
     const nutrient = {kinematicData};
@@ -12,7 +12,7 @@ function drawer(data) {
     return {
         draw: function() {
             ctx.beginPath();
-			ctx.arc(data.position.x, data.position.y, 10, 0, 2 * Math.PI);
+			ctx.arc(data.position.x, data.position.y, NUTRIENT_RADIUS, 0, 2 * Math.PI);
 			ctx.fillStyle = "green";
 			ctx.fill();
 			ctx.lineWidth = 2;

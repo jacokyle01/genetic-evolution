@@ -1,4 +1,4 @@
-import { ctx } from "./main.js";
+import { ctx, PROPELLANT_WIDTH } from "./main.js";
 
 import {mover, directionChanger } from "./entity.js";
 
@@ -23,7 +23,7 @@ function drawer(data) {
 		draw: function () {
             const x = data.position.x;
             const y = data.position.y;
-            const width = 30;
+            const width = PROPELLANT_WIDTH;
 
 			ctx.fillStyle = "red";
 			ctx.beginPath();
