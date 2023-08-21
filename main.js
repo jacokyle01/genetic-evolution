@@ -38,6 +38,9 @@ window.addEventListener("load", () => {
 
 export function nextTick() {
 	tick++;
+
+	//check for collisions HERE
+
 	regulateNutrients();
 
 	//have each entity target the nearest nutrient
@@ -59,9 +62,6 @@ export function nextTick() {
 		})
 		entity.target(closest);
 	});
-
-	entities.forEach((entity) => entity.move());
-	propellants.forEach((propellant) => propellant.move());
 	const exploding = propellants.filter((propellant) => {
 		return propellant.explodesAt == tick;
 	});
@@ -78,7 +78,14 @@ export function nextTick() {
 		}
 	});
 
+	entities.forEach((entity) => entity.move());
+	propellants.forEach((propellant) => propellant.move());
+
 	animate();
+}
+
+function isCollision(distance) {
+	return distance < NUTRIENT_RADIUS + ENTITY_RADIUS;
 }
 
 function regulateNutrients() {
