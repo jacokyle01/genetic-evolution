@@ -10,7 +10,7 @@ import { createPhysics } from "./physics.js";
 
 import { createNutrient } from "./nutrient.js";
 
-import { distance } from "./maths.js";
+import { distance, magnitude } from "./maths.js";
 
 export let entities = [];
 export let propellants = [];
@@ -78,17 +78,6 @@ export function nextTick() {
 	animate();
 }
 
-export function findNearestNutrient(entity) {
-	let entityPos = entity.kinematicData.position;
-	const distances = nutrients.map((nutrient) => {
-		let nutrientPos = nutrient.kinematicData.position;
-		return distance(entityPos.x, entityPos.y, nutrientPos.x, nutrientPos.y);
-	});
-	//console.log(distances);
-	
-
-}
-
 function regulateNutrients() {
 	while (nutrients.length < NUM_NUTRIENTS) {
 		const nutrient = generateNutrient();
@@ -110,51 +99,27 @@ function animate() {
 	nutrients.forEach((nutrient) => nutrient.draw());
 }
 
+//TODO refactor using array, functional paradigm
 function handleExplosion(propellant) {
 	entities.forEach((entity) => {
-		const propellantVector = {
+		const fromPropellant = {
 			x: entity.kinematicData.position.x - propellant.kinematicData.position.x,
 			y: entity.kinematicData.position.y - propellant.kinematicData.position.y,
 		};
 
-		let xIsPositive = propellantVector.x > 0;
-		let yIsPositive = propellantVector.y > 0;
-
 		const physics = createPhysics();
+		let distance = magnitude(fromPropellant.x, fromPropellant.y);
+		let energy = physics.calculateEnergy(propellant.explosiveForce, distance);
+		let speed = physics.velocityFromEnergy(energy, entity.mass);
 
-		//calculate resultant energy
-		propellantVector.x = physics.calculateEnergy(
-			propellant.explosiveForce,
-			propellantVector.x
-		);
-		propellantVector.y = physics.calculateEnergy(
-			propellant.explosiveForce,
-			propellantVector.y
-		);
-
-		//calculate resultant velocity components
-		propellantVector.x = physics.velocityFromEnergy(
-			propellantVector.x,
-			entity.mass
-		);
-
-		propellantVector.y = physics.velocityFromEnergy(
-			propellantVector.y,
-			entity.mass
-		);
-
-		//add velocity to affected entity's velocity
-
-		if (xIsPositive) {
-			entity.kinematicData.velocity.x += propellantVector.x;
-		} else {
-			entity.kinematicData.velocity.x -= propellantVector.x;
+		let total = Math.abs(fromPropellant.x) + Math.abs(fromPropellant.y);
+		const velocityFractions = {
+			x: fromPropellant.x / total,
+			y: fromPropellant.y / total
 		}
-		if (yIsPositive) {
-			entity.kinematicData.velocity.y += propellantVector.y;
-		} else {
-			entity.kinematicData.velocity.y -= propellantVector.y;
-		}
+
+		entity.kinematicData.velocity.x += velocityFractions.x * speed;
+		entity.kinematicData.velocity.y += velocityFractions.y * speed;
 	});
 }
 
@@ -182,4 +147,4 @@ export function resetGame() {
 	propellants = [];
 }
 
-setInterval(nextTick, 50);
+setInterval(nextTick, 25);
