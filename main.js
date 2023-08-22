@@ -113,6 +113,12 @@ export function nextTick() {
 
 	})
 
+	propellants.forEach((entity) => {
+		entity.kinematicData.velocity.x *= .90;
+		entity.kinematicData.velocity.y *= .90;
+
+	})
+
 	animate();
 }
 
