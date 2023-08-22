@@ -17,7 +17,7 @@ export let propellants = [];
 export let nutrients = [];
 
 const STARTING_ENTITIES = 3;
-const NUM_NUTRIENTS = 10;
+const NUM_NUTRIENTS = 15;
 
 const canvas = document.querySelector("canvas");
 export const ENTITY_RADIUS = 20;
@@ -53,7 +53,7 @@ export function nextTick() {
 
 		colliding.forEach((collided) => {
 			entity.energy += collided.energy;
-		})
+		});
 
 		nutrients = nutrients.filter((nutrient) => {
 			let distanceApart = distance(
@@ -105,6 +105,13 @@ export function nextTick() {
 
 	entities.forEach((entity) => entity.move());
 	propellants.forEach((propellant) => propellant.move());
+
+	//affect friction here 
+	entities.forEach((entity) => {
+		entity.kinematicData.velocity.x *= .90;
+		entity.kinematicData.velocity.y *= .90;
+
+	})
 
 	animate();
 }
@@ -184,4 +191,4 @@ export function resetGame() {
 	propellants = [];
 }
 
-setInterval(nextTick, 25);
+setInterval(nextTick, 20);
