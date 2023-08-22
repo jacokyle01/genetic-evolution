@@ -1,7 +1,7 @@
 import { NUTRIENT_RADIUS, ctx } from "./main.js";
 
-export const createNutrient = (kinematicData) => {
-    const nutrient = {kinematicData};
+export const createNutrient = (kinematicData, energy) => {
+    const nutrient = {kinematicData, energy};
 
     Object.assign(nutrient, drawer(kinematicData));
     return nutrient;

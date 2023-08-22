@@ -40,6 +40,31 @@ export function nextTick() {
 	tick++;
 
 	//check for collisions HERE
+	entities.forEach((entity) => {
+		const colliding = nutrients.filter((nutrient) => {
+			let distanceApart = distance(
+				entity.kinematicData.position.x,
+				entity.kinematicData.position.y,
+				nutrient.kinematicData.position.x,
+				nutrient.kinematicData.position.y
+			);
+			return isCollision(distanceApart);
+		});
+
+		colliding.forEach((collided) => {
+			entity.energy += collided.energy;
+		})
+
+		nutrients = nutrients.filter((nutrient) => {
+			let distanceApart = distance(
+				entity.kinematicData.position.x,
+				entity.kinematicData.position.y,
+				nutrient.kinematicData.position.x,
+				nutrient.kinematicData.position.y
+			);
+			return !isCollision(distanceApart);
+		});
+	});
 
 	regulateNutrients();
 
@@ -51,15 +76,15 @@ export function nextTick() {
 				closest.kinematicData.position.y,
 				entity.kinematicData.position.x,
 				entity.kinematicData.position.y
-				)
+			);
 			let distanceNext = distance(
 				next.kinematicData.position.x,
 				next.kinematicData.position.y,
 				entity.kinematicData.position.x,
 				entity.kinematicData.position.y
-			)
+			);
 			return distanceClosest > distanceNext ? next : closest;
-		})
+		});
 		entity.target(closest);
 	});
 	const exploding = propellants.filter((propellant) => {
@@ -84,6 +109,8 @@ export function nextTick() {
 	animate();
 }
 
+function handleCollision() {}
+
 function isCollision(distance) {
 	return distance < NUTRIENT_RADIUS + ENTITY_RADIUS;
 }
@@ -99,7 +126,7 @@ function generateNutrient() {
 	let x = Math.floor(Math.random() * canvas.width);
 	let y = Math.floor(Math.random() * canvas.height);
 
-	return createNutrient(createKinematicDataRaw(x, y, 0, 0));
+	return createNutrient(createKinematicDataRaw(x, y, 0, 0), 1);
 }
 
 function animate() {
@@ -125,8 +152,8 @@ function handleExplosion(propellant) {
 		let total = Math.abs(fromPropellant.x) + Math.abs(fromPropellant.y);
 		const velocityFractions = {
 			x: fromPropellant.x / total,
-			y: fromPropellant.y / total
-		}
+			y: fromPropellant.y / total,
+		};
 
 		entity.kinematicData.velocity.x += velocityFractions.x * speed;
 		entity.kinematicData.velocity.y += velocityFractions.y * speed;

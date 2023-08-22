@@ -2,12 +2,15 @@ import { ENTITY_RADIUS, ctx, tick } from "./main.js";
 import { createPropellant } from "./propellant.js";
 import { toRadians, toDegrees } from "./maths.js";
 
+const DEFAULT_ENERGY = 20;
+
 export const createEntity = (kinematicData, mass, facing, payloadInfo) => {
 	const entity = {
 		kinematicData,
 		mass,
 		facing,
 		payloadInfo,
+		energy: DEFAULT_ENERGY
 	};
 	Object.assign(
 		entity,
