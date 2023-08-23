@@ -102,6 +102,15 @@ export function nextTick() {
 	propellants.forEach((propellant) => propellant.move());
 
 	//affect friction here
+	affectFriction
+
+	animate();
+	// entities.forEach((entity) => {
+	// 	console.log(entity.kinematicData.position.x + ", " + entity.kinematicData.position.y)
+	//})
+}
+
+function affectFriction() {
 	entities.forEach((entity) => {
 		entity.kinematicData.velocity.x *= 0.9;
 		entity.kinematicData.velocity.y *= 0.9;
@@ -111,14 +120,7 @@ export function nextTick() {
 		entity.kinematicData.velocity.x *= 0.9;
 		entity.kinematicData.velocity.y *= 0.9;
 	});
-
-	animate();
-	// entities.forEach((entity) => {
-	// 	console.log(entity.kinematicData.position.x + ", " + entity.kinematicData.position.y)
-	//})
 }
-
-function handleCollision() {}
 
 function isCollision(distance) {
 	return distance < NUTRIENT_RADIUS + ENTITY_RADIUS;
