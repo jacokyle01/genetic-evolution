@@ -17,7 +17,7 @@ export let propellants = [];
 export let nutrients = [];
 
 const STARTING_ENTITIES = 3;
-const NUM_NUTRIENTS = 15;
+const NUM_NUTRIENTS = 1;
 
 const canvas = document.querySelector("canvas");
 export const ENTITY_RADIUS = 20;
@@ -39,22 +39,9 @@ window.addEventListener("load", () => {
 export function nextTick() {
 	tick++;
 
-	//check for collisions HERE
+	//check for nutrient collisions HERE
+
 	entities.forEach((entity) => {
-		const colliding = nutrients.filter((nutrient) => {
-			let distanceApart = distance(
-				entity.kinematicData.position.x,
-				entity.kinematicData.position.y,
-				nutrient.kinematicData.position.x,
-				nutrient.kinematicData.position.y
-			);
-			return isCollision(distanceApart);
-		});
-
-		colliding.forEach((collided) => {
-			entity.energy += collided.energy;
-		});
-
 		nutrients = nutrients.filter((nutrient) => {
 			let distanceApart = distance(
 				entity.kinematicData.position.x,
@@ -62,7 +49,13 @@ export function nextTick() {
 				nutrient.kinematicData.position.x,
 				nutrient.kinematicData.position.y
 			);
-			return !isCollision(distanceApart);
+
+			if (isCollision(distanceApart)) {
+				entity.energy += nutrient.energy;
+				return false;
+			}
+
+			return true;
 		});
 	});
 
@@ -87,9 +80,11 @@ export function nextTick() {
 		});
 		entity.target(closest);
 	});
+
 	const exploding = propellants.filter((propellant) => {
 		return propellant.explodesAt == tick;
 	});
+
 	exploding.forEach((propellant) => handleExplosion(propellant));
 	propellants = propellants.filter((propellant) => {
 		return propellant.explodesAt > tick;
@@ -106,20 +101,21 @@ export function nextTick() {
 	entities.forEach((entity) => entity.move());
 	propellants.forEach((propellant) => propellant.move());
 
-	//affect friction here 
+	//affect friction here
 	entities.forEach((entity) => {
-		entity.kinematicData.velocity.x *= .90;
-		entity.kinematicData.velocity.y *= .90;
-
-	})
+		entity.kinematicData.velocity.x *= 0.9;
+		entity.kinematicData.velocity.y *= 0.9;
+	});
 
 	propellants.forEach((entity) => {
-		entity.kinematicData.velocity.x *= .90;
-		entity.kinematicData.velocity.y *= .90;
-
-	})
+		entity.kinematicData.velocity.x *= 0.9;
+		entity.kinematicData.velocity.y *= 0.9;
+	});
 
 	animate();
+	// entities.forEach((entity) => {
+	// 	console.log(entity.kinematicData.position.x + ", " + entity.kinematicData.position.y)
+	//})
 }
 
 function handleCollision() {}
@@ -197,4 +193,4 @@ export function resetGame() {
 	propellants = [];
 }
 
-setInterval(nextTick, 20);
+setInterval(nextTick, 25);
