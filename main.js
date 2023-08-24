@@ -17,7 +17,7 @@ export let propellants = [];
 export let nutrients = [];
 
 const STARTING_ENTITIES = 3;
-const NUM_NUTRIENTS = 1;
+const NUM_NUTRIENTS = 20;
 
 const canvas = document.querySelector("canvas");
 export const ENTITY_RADIUS = 20;
@@ -61,24 +61,61 @@ export function nextTick() {
 
 	regulateNutrients();
 
-	//have each entity target the nearest nutrient
+	//assign targets
 	entities.forEach((entity) => {
-		let closest = nutrients.reduce((closest, next) => {
-			let distanceClosest = distance(
-				closest.kinematicData.position.x,
-				closest.kinematicData.position.y,
-				entity.kinematicData.position.x,
-				entity.kinematicData.position.y
-			);
-			let distanceNext = distance(
-				next.kinematicData.position.x,
-				next.kinematicData.position.y,
-				entity.kinematicData.position.x,
-				entity.kinematicData.position.y
-			);
-			return distanceClosest > distanceNext ? next : closest;
-		});
-		entity.target(closest);
+		if (entity.energy > entity.matingThreshold) {
+			entity.targeting = "entity";
+		} else {
+			entity.targeting = "nutrient";
+		}
+	});
+
+	//calculate targets
+	const breeding = entities.filter(entity => entity.targeting == "entity");
+
+	entities.forEach((entity) => {
+		if (entity.targeting == "nutrient" || breeding.length < 2) {
+			//find and target nearest nutrient
+
+			let closest = nutrients.reduce((closest, next) => {
+				let distanceClosest = distance(
+					closest.kinematicData.position.x,
+					closest.kinematicData.position.y,
+					entity.kinematicData.position.x,
+					entity.kinematicData.position.y
+				);
+				let distanceNext = distance(
+					next.kinematicData.position.x,
+					next.kinematicData.position.y,
+					entity.kinematicData.position.x,
+					entity.kinematicData.position.y
+				);
+				return distanceClosest > distanceNext ? next : closest;
+			});
+			entity.target(closest);
+		}
+
+		else if (entity.targeting == "entity") {
+			//find and target nearest potential mate 
+			const potentialMates = breeding.filter(breedingEntity => breedingEntity != entity);
+			let closest = potentialMates.reduce((closest, next) => {
+				let distanceClosest = distance(
+					closest.kinematicData.position.x,
+					closest.kinematicData.position.y,
+					entity.kinematicData.position.x,
+					entity.kinematicData.position.y
+				);
+				let distanceNext = distance(
+					next.kinematicData.position.x,
+					next.kinematicData.position.y,
+					entity.kinematicData.position.x,
+					entity.kinematicData.position.y
+				);
+				return distanceClosest > distanceNext ? next : closest;
+			});
+			entity.target(closest);
+
+		}
 	});
 
 	const exploding = propellants.filter((propellant) => {
@@ -102,12 +139,13 @@ export function nextTick() {
 	propellants.forEach((propellant) => propellant.move());
 
 	//affect friction here
-	affectFriction
+	affectFriction();
 
 	animate();
 	// entities.forEach((entity) => {
 	// 	console.log(entity.kinematicData.position.x + ", " + entity.kinematicData.position.y)
 	//})
+	entities.forEach(entity => console.log(entity));
 }
 
 function affectFriction() {

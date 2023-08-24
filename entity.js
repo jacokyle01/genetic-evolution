@@ -4,13 +4,23 @@ import { toRadians, toDegrees } from "./maths.js";
 
 const DEFAULT_ENERGY = 20;
 
-export const createEntity = (kinematicData, mass, facing, payloadInfo) => {
+export const createEntity = (
+	kinematicData,
+	mass,
+	facing,
+	matingThreshold,
+	energyTransfer,
+	payloadInfo
+) => {
 	const entity = {
 		kinematicData,
 		mass,
 		facing,
+		matingThreshold,
+		energyTransfer,
 		payloadInfo,
-		energy: DEFAULT_ENERGY
+		energy: DEFAULT_ENERGY,
+		targeting: null,
 	};
 	Object.assign(
 		entity,
@@ -70,7 +80,7 @@ function drawer(data) {
 		draw: function () {
 			ctx.beginPath();
 			ctx.arc(data.position.x, data.position.y, ENTITY_RADIUS, 0, 2 * Math.PI);
-			ctx.fillStyle = "blue";
+			this.targeting == "entity" ? ctx.fillStyle = "purple" : ctx.fillStyle = "blue";
 			ctx.fill();
 			ctx.lineWidth = 2;
 			ctx.stroke();
@@ -84,18 +94,11 @@ function payloadGetter(kData, pInfo) {
 			let ejectingAt = toRadians(this.facing + 180);
 			ejectingAt = ejectingAt.toFixed(3);
 			let xVel = pInfo.ejectionVelocity * Math.cos(ejectingAt);
-			let yVel =
-				-1 * pInfo.ejectionVelocity * Math.sin(ejectingAt);
+			let yVel = -1 * pInfo.ejectionVelocity * Math.sin(ejectingAt);
 			const propellant = createPropellant(
-				createKinematicDataRaw(
-					kData.position.x,
-					kData.position.y,
-					xVel,
-					yVel
-				),
+				createKinematicDataRaw(kData.position.x, kData.position.y, xVel, yVel),
 				...pInfo.payloadData,
 				pInfo.explodesIn + tick
-
 			);
 
 			return propellant;
@@ -105,12 +108,12 @@ function payloadGetter(kData, pInfo) {
 
 function targeter(kData) {
 	return {
-		target: function(nutrient) {
+		target: function (nutrient) {
 			let xdelta = nutrient.kinematicData.position.x - kData.position.x;
 			let ydelta = kData.position.y - nutrient.kinematicData.position.y;
 			let radians = Math.atan2(ydelta, xdelta);
 			this.facing = (toDegrees(radians) + 360) % 360;
-		}
-	}
+		},
+	};
 }
 //////////
