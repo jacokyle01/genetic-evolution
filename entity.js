@@ -10,7 +10,8 @@ export const createEntity = (
 	facing,
 	matingThreshold,
 	energyTransfer,
-	payloadInfo
+	payloadInfo,
+	geneticInfo
 ) => {
 	const entity = {
 		kinematicData,
@@ -21,6 +22,7 @@ export const createEntity = (
 		payloadInfo,
 		energy: DEFAULT_ENERGY,
 		targeting: null,
+		geneticInfo
 	};
 	Object.assign(
 		entity,

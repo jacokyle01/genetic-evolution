@@ -36,15 +36,18 @@ function createEntityData(kinematicInfo, facing, geneticInfo) {
 			[payloadMass, explosiveForce],
 			explodesIn
 		),
+		geneticInfo
 	];
 }
 
-// const genes = createRandomGenes();
-// const entityData = createEntityData(
-// 	createKinematicDataRaw(0, 0, 0, 0),
-// 	180,
-// 	genes
-// );
 
-// const entity = createEntity(...entityData);
-// console.log(entity);
+
+const genes = createRandomGenes();
+const entityData = createEntityData(
+	createKinematicDataRaw(0, 0, 0, 0),
+	180,
+	genes
+);
+
+const entity = createEntity(...entityData);
+console.log(entity);
