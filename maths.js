@@ -15,3 +15,7 @@ export function distance(x1, y1, x2, y2) {
 export function magnitude(x, y) {
 	return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
 }
+
+export function midpoint(x1, y1, x2, y2) {
+	return {x: (x2 + x1) / 2, y: (y1 + y2) / 2}
+}

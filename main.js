@@ -10,7 +10,9 @@ import { createPhysics } from "./physics.js";
 
 import { createNutrient } from "./nutrient.js";
 
-import { distance, magnitude } from "./maths.js";
+import { distance, magnitude, midpoint } from "./maths.js";
+
+import { createEntityData, mergeGeneticInfo } from "./genetics.js";
 
 export let entities = [];
 export let propellants = [];
@@ -119,40 +121,40 @@ export function nextTick() {
 
 	//handle entity-on-entity collisions here.
 
-	console.log(breeding.length);
+	//console.log(breeding.length);
 
 	while (breeding.length > 1) {
 		const entity = breeding[0];
-		
+
 		for (let i = 1; i < breeding.length; i++) {
-			console.log(i);
+			//console.log(i);
 			const next = breeding[i];
-			
-				let distanceApart = distance(
-					entity.kinematicData.position.x,
-					entity.kinematicData.position.y,
-					next.kinematicData.position.x,
-					next.kinematicData.position.y
-				);
+
+			let distanceApart = distance(
+				entity.kinematicData.position.x,
+				entity.kinematicData.position.y,
+				next.kinematicData.position.x,
+				next.kinematicData.position.y
+			);
+
+			if (isEntityCollision(distanceApart)) {
+				console.log("collided");
+				entity.targeting = null;
+				next.targeting = null;
+
+				entity.energy = 20;
+				next.energy = 20;
+
+				const child = createChild(entity, next);
+				initializeEntity(child);
 				
-				if (isEntityCollision(distanceApart)) {
-					console.log("collided");
-					entity.targeting = null;
-					next.targeting = null;
-
-					entity.energy = 20;
-					next.energy = 20;
-
-					alert("BAM!");
-					
-					breeding.splice(i, 1);
-					break;
-				}
+				breeding.splice(i, 1);
+				break;
 			}
-
-			breeding.shift();
-
 		}
+
+		breeding.shift();
+	}
 
 	const exploding = propellants.filter((propellant) => {
 		return propellant.explodesAt == tick;
@@ -182,6 +184,27 @@ export function nextTick() {
 	// 	console.log(entity.kinematicData.position.x + ", " + entity.kinematicData.position.y)
 	//})
 	//entities.forEach((entity) => console.log(entity));
+}
+
+export function createChild(entity1, entity2) {
+	const geneticInfo = mergeGeneticInfo(
+		entity1.geneticInfo,
+		entity2.geneticInfo
+	);
+	const position = midpoint(
+		entity1.kinematicData.position.x,
+		entity1.kinematicData.position.y,
+		entity2.kinematicData.position.x,
+		entity2.kinematicData.position.y
+	);
+
+	const kinematicData = {position, velocity: {x: 0, y: 0}};
+	//console.log(kinematicData);
+
+	const childData = createEntityData(kinematicData, 0, geneticInfo);
+	console.log(childData);
+	const child = createEntity(...childData);
+	return child;
 }
 
 function affectFriction() {

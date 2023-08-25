@@ -13,7 +13,7 @@ function createRandomGenes() {
 	return geneticInfo;
 }
 
-function createEntityData(kinematicInfo, facing, geneticInfo) {
+export function createEntityData(kinematicInfo, facing, geneticInfo) {
 	let entityMass = (geneticInfo[0] % 990) + 10;
 	let ejectionInterval = (geneticInfo[1] % 95) + 5;
 	let ejectionVelocity = (geneticInfo[2] % 40) + 10;
@@ -40,14 +40,26 @@ function createEntityData(kinematicInfo, facing, geneticInfo) {
 	];
 }
 
+export function mergeGeneticInfo(genes1, genes2) {
+	console.log(genes1,  genes2);
+	return genes1.map((gene1, index) => (Math.floor((gene1 + genes2[index]) / 2)));
+}
 
 
-const genes = createRandomGenes();
-const entityData = createEntityData(
-	createKinematicDataRaw(0, 0, 0, 0),
-	180,
-	genes
-);
 
-const entity = createEntity(...entityData);
-console.log(entity);
+
+// const genes1 = createRandomGenes();
+// const genes2 = createRandomGenes();
+// const genes3 = mergeGeneticInfo(genes1, genes2);
+
+// console.log(genes1, genes2, genes3);
+
+
+// const entityData = createEntityData(
+// 	createKinematicDataRaw(0, 0, 0, 0),
+// 	180,
+// 	genes
+// );
+
+// const entity = createEntity(...entityData);
+// console.log(entity);
