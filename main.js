@@ -50,7 +50,7 @@ export function nextTick() {
 				nutrient.kinematicData.position.y
 			);
 
-			if (isCollision(distanceApart)) {
+			if (isFoodCollision(distanceApart)) {
 				entity.energy += nutrient.energy;
 				return false;
 			}
@@ -71,7 +71,7 @@ export function nextTick() {
 	});
 
 	//calculate targets
-	const breeding = entities.filter(entity => entity.targeting == "entity");
+	const breeding = entities.filter((entity) => entity.targeting == "entity");
 
 	entities.forEach((entity) => {
 		if (entity.targeting == "nutrient" || breeding.length < 2) {
@@ -93,11 +93,11 @@ export function nextTick() {
 				return distanceClosest > distanceNext ? next : closest;
 			});
 			entity.target(closest);
-		}
-
-		else if (entity.targeting == "entity") {
-			//find and target nearest potential mate 
-			const potentialMates = breeding.filter(breedingEntity => breedingEntity != entity);
+		} else if (entity.targeting == "entity") {
+			//find and target nearest potential mate
+			const potentialMates = breeding.filter(
+				(breedingEntity) => breedingEntity != entity
+			);
 			let closest = potentialMates.reduce((closest, next) => {
 				let distanceClosest = distance(
 					closest.kinematicData.position.x,
@@ -114,9 +114,45 @@ export function nextTick() {
 				return distanceClosest > distanceNext ? next : closest;
 			});
 			entity.target(closest);
-
 		}
 	});
+
+	//handle entity-on-entity collisions here.
+
+	console.log(breeding.length);
+
+	while (breeding.length > 1) {
+		const entity = breeding[0];
+		
+		for (let i = 1; i < breeding.length; i++) {
+			console.log(i);
+			const next = breeding[i];
+			
+				let distanceApart = distance(
+					entity.kinematicData.position.x,
+					entity.kinematicData.position.y,
+					next.kinematicData.position.x,
+					next.kinematicData.position.y
+				);
+				
+				if (isEntityCollision(distanceApart)) {
+					console.log("collided");
+					entity.targeting = null;
+					next.targeting = null;
+
+					entity.energy = 20;
+					next.energy = 20;
+
+					alert("BAM!");
+					
+					breeding.splice(i, 1);
+					break;
+				}
+			}
+
+			breeding.shift();
+
+		}
 
 	const exploding = propellants.filter((propellant) => {
 		return propellant.explodesAt == tick;
@@ -145,7 +181,7 @@ export function nextTick() {
 	// entities.forEach((entity) => {
 	// 	console.log(entity.kinematicData.position.x + ", " + entity.kinematicData.position.y)
 	//})
-	entities.forEach(entity => console.log(entity));
+	//entities.forEach((entity) => console.log(entity));
 }
 
 function affectFriction() {
@@ -160,8 +196,12 @@ function affectFriction() {
 	});
 }
 
-function isCollision(distance) {
+function isFoodCollision(distance) {
 	return distance < NUTRIENT_RADIUS + ENTITY_RADIUS;
+}
+
+function isEntityCollision(distance) {
+	return distance < ENTITY_RADIUS * 2;
 }
 
 function regulateNutrients() {
