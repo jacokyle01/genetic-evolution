@@ -4,7 +4,7 @@ import {
 	createEntity,
 } from "./entity.js";
 
-function createRandomGenes() {
+export function createRandomGenes() {
 	let geneticInfo = [];
 	for (let i = 0; i < 8; i++) {
 		geneticInfo.push(Math.floor(Math.random() * 1000));

@@ -147,7 +147,7 @@ export function nextTick() {
 
 				const child = createChild(entity, next);
 				initializeEntity(child);
-				
+
 				breeding.splice(i, 1);
 				break;
 			}
@@ -198,12 +198,21 @@ export function createChild(entity1, entity2) {
 		entity2.kinematicData.position.y
 	);
 
-	const kinematicData = {position, velocity: {x: 0, y: 0}};
+	const kinematicData = { position, velocity: { x: 0, y: 0 } };
+
 	//console.log(kinematicData);
+
+	let transfer1 = entity1.energy * (entity1.energyTransfer / 100)
+	let transfer2 = entity2.energy * (entity2.energyTransfer / 100)
+
+	entity1.energy -= transfer1;
+	entity2.energy -= transfer2;
 
 	const childData = createEntityData(kinematicData, 0, geneticInfo);
 	console.log(childData);
 	const child = createEntity(...childData);
+
+	child.energy = transfer1 + transfer2;
 	return child;
 }
 
